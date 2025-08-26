@@ -8,6 +8,8 @@ export default function Header ({
   setSideMenuOpen,
   tabletPreview,
   setTabletPreview,
+  landscapePreview,
+  setLandscapePreview,
   guidesShown,
   setGuidesShown
 }) {
@@ -43,6 +45,25 @@ export default function Header ({
       >
         <path
           d='M16 1H8C6.62 1 5.5 2.12 5.5 3.5V20.5C5.5 21.88 6.62 23 8 23H16C17.38 23 18.5 21.88 18.5 20.5V3.5C18.5 2.12 17.38 1 16 1ZM12 22C11.17 22 10.5 21.33 10.5 20.5C10.5 19.67 11.17 19 12 19C12.83 19 13.5 19.67 13.5 20.5C13.5 21.33 12.83 22 12 22ZM16.5 18H7.5V4H16.5V18Z'
+          fill='currentColor'
+        />
+      </svg>
+    )
+  }
+
+  const PhoneLandscapeIcon = props => {
+    return (
+      <svg
+        aria-hidden='true'
+        focusable='false'
+        height='24'
+        role='presentation'
+        viewBox='0 0 24 24'
+        width='24'
+        {...props}
+      >
+        <path
+          d='M20.5 16V8C20.5 6.62 19.38 5.5 18 5.5H3.5C2.12 5.5 1 6.62 1 8V16C1 17.38 2.12 18.5 3.5 18.5H18C19.38 18.5 20.5 17.38 20.5 16ZM2 12C2 11.17 2.67 10.5 3.5 10.5C4.33 10.5 5 11.17 5 12C5 12.83 4.33 13.5 3.5 13.5C2.67 13.5 2 12.83 2 12ZM18 16.5H6V7.5H18V16.5Z'
           fill='currentColor'
         />
       </svg>
@@ -121,17 +142,32 @@ export default function Header ({
         <div className='flex flex-row'>
           <div
             className={`flex h-11 w-[58px] border-1 hover:bg-navy700 ${
-              !tabletPreview
+              !tabletPreview && !landscapePreview
                 ? 'bg-navy700 border-brandAccent3'
                 : 'border-navy600'
             } shadow-sm items-center justify-center rounded-l-md text-neutral200 cursor-pointer`}
             onClick={(e) => {
               setTabletPreview(false)
+              setLandscapePreview(false)
               e.stopPropagation()
             }}
           >
             <PhoneIcon />
-          </div>{' '}
+          </div>
+          <div
+            className={`flex h-11 w-[58px] border-1 hover:bg-navy700 ${
+              landscapePreview && !tabletPreview
+                ? 'bg-navy700 border-brandAccent3'
+                : 'border-navy600'
+            } shadow-sm items-center justify-center text-neutral200 cursor-pointer`}
+            onClick={(e) => {
+              setTabletPreview(false)
+              setLandscapePreview(true)
+              e.stopPropagation()
+            }}
+          >
+            <PhoneLandscapeIcon />
+          </div>
           <div
             className={`flex h-11 w-[58px] border-1 hover:bg-navy700 ${
               tabletPreview
@@ -140,6 +176,7 @@ export default function Header ({
             } shadow-sm items-center justify-center rounded-r-md text-neutral200 cursor-pointer`}
             onClick={(e) => {
               setTabletPreview(true)
+              setLandscapePreview(false)
               e.stopPropagation()
             }}
           >

@@ -159,27 +159,78 @@ export default function StreamWidget ({
 
   function handleReaction (messageEvent) {
     if (messageEvent.message.type == 'reaction') {
-      //  Somebody has sent a reaction (including myself)
-      const emojiElement = document.createElement('div')
-      emojiElement.textContent = messageEvent.message.text
-      emojiElement.className =
-        'absolute text-3xl pointer-events-none animate-float-up'
-      emojiElement.style.left = `${Math.random() * 80 + 10}%`
-      emojiElement.style.top = '80%' // Start near the bottom
-      emojiElement.style.position = 'absolute'
-      const container = document.getElementById(
-        `live-stream-${isMobilePreview}`
-      )
-      container?.appendChild(emojiElement)
-      emojiElement.addEventListener('animationend', () => {
-        container?.removeChild(emojiElement)
-      })
-      //  Catch all (if switch between tablet and mobile views)
-      setTimeout(() => {
-        try {
-          container?.removeChild(emojiElement)
-        } catch {}
-      }, 2000)
+      // Find ANY visible video container instead of being picky
+      const allContainers = document.querySelectorAll('[id^="live-stream-"]')
+      let bestContainer = null
+      let bestRect = null
+      
+      for (const container of allContainers) {
+        const rect = container.getBoundingClientRect()
+        console.log(`📊 Container ${container.id}:`, {
+          width: rect.width, 
+          height: rect.height,
+          left: rect.left, 
+          top: rect.top,
+          visible: rect.width > 0 && rect.height > 0
+        })
+        
+        // Use the largest visible container
+        if (rect.width > 0 && rect.height > 0 && (!bestRect || rect.width > bestRect.width)) {
+          bestContainer = container as HTMLElement
+          bestRect = rect
+        }
+      }
+      
+      if (!bestContainer || !bestRect) {
+        console.log('❌ No visible video containers found')
+        return
+      }
+      
+      console.log('✅ Using container:', bestContainer.id)
+      
+      try {
+        //  Somebody has sent a reaction (including myself)
+        console.log('🔨 Creating emoji element...')
+        const emojiElement = document.createElement('div')
+        emojiElement.textContent = messageEvent.message.text
+        emojiElement.className = 'fixed text-4xl pointer-events-none animate-float-up'
+        
+        console.log('📐 Calculating position...')
+        // Position emoji randomly within the video area using fixed positioning
+        const leftPos = bestRect.left + (Math.random() * bestRect.width * 0.8) + bestRect.width * 0.1
+        const topPos = bestRect.bottom - 100
+        
+        emojiElement.style.left = `${leftPos}px`
+        emojiElement.style.top = `${topPos}px`
+        emojiElement.style.position = 'fixed'
+        emojiElement.style.zIndex = '99999'
+        emojiElement.style.textShadow = '0 0 12px rgba(0,0,0,0.9)'
+        emojiElement.style.fontSize = '3rem'
+        
+        console.log('📎 Appending to document body...')
+        // Add to document body instead of container to avoid clipping
+        document.body.appendChild(emojiElement)
+        
+        console.log('✨ Emoji added with fixed positioning:', {
+          emoji: messageEvent.message.text,
+          left: leftPos,
+          top: topPos,
+          containerRect: {width: bestRect.width, height: bestRect.height, left: bestRect.left, top: bestRect.top}
+        })
+        
+        // Clean up
+        emojiElement.addEventListener('animationend', () => {
+          document.body.removeChild(emojiElement)
+        })
+        setTimeout(() => {
+          try {
+            document.body.removeChild(emojiElement)
+          } catch {}
+        }, 3000)
+        
+      } catch (error) {
+        console.error('💥 Error creating emoji:', error)
+      }
     }
   }
 
@@ -277,10 +328,11 @@ export default function StreamWidget ({
 
   return (
     <div className={`${className}`}>
-      <div className='relative'>
+      <div className='relative w-full h-full'>
         <div
           id={`live-stream-${isMobilePreview}`}
-          className={`bg-neutral200 ${isMobilePreview ? '' : ''}`}
+          className='w-full h-full bg-black relative'
+          style={{ zIndex: 1, overflow: 'visible', position: 'relative' }}
         >
           {isVideoPlaying == true ? (
             <div className='pointer-events-none'>
@@ -289,8 +341,8 @@ export default function StreamWidget ({
                 url={videoUrl}
                 playing={isVideoPlaying}
                 controls={false}
-                width={isMobilePreview ? 418 : 698}
-                height={isMobilePreview ? 235 : 393}
+                width={isMobilePreview ? 418 : 1280}
+                height={isMobilePreview ? 235 : 720}
                 loop={false}
                 muted={isMobilePreview ? true : muted}
                 pip={false}
@@ -303,9 +355,7 @@ export default function StreamWidget ({
             </div>
           ) : (
             <div
-              className={`flex flex-row items-center justify-center ${
-                isMobilePreview ? 'w-[418px]' : 'w-[698px]'
-              } ${isMobilePreview ? 'h-[235px]' : 'h-[393px]'}`}
+              className='flex flex-row items-center justify-center w-full h-full'
             >
               <div
                 className={`flex flex-col items-center ${

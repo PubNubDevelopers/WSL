@@ -6,6 +6,7 @@ import Header from '../components/header'
 import SideMenu from '../side-menu/sideMenu'
 import PreviewTablet from '../components/previewTablet'
 import PreviewMobile from '../components/previewMobile'
+import PreviewMobileLandscape from '../components/previewMobileLandscape'
 import { OpenInNewWindowIcon } from '../side-menu/sideMenuIcons'
 import { urls } from '../data/urls'
 import { dynamicAdChannelId } from "../data/constants";
@@ -18,6 +19,7 @@ export default function SportsEventPage ({
   isGuidedDemo
 }) {
   const [tabletPreview, setTabletPreview] = useState(true)
+  const [landscapePreview, setLandscapePreview] = useState(false)
   const [sideMenuOpen, setSideMenuOpen] = useState(true)
   const [guidesShown, setGuidesShown] = useState(false)
   const [visibleGuide, setVisibleGuide] = useState('')
@@ -81,6 +83,8 @@ export default function SportsEventPage ({
         setSideMenuOpen={setSideMenuOpen}
         tabletPreview={tabletPreview}
         setTabletPreview={setTabletPreview}
+        landscapePreview={landscapePreview}
+        setLandscapePreview={setLandscapePreview}
         guidesShown={guidesShown}
         setGuidesShown={setGuidesShown}
       ></Header>
@@ -126,7 +130,7 @@ export default function SportsEventPage ({
             ></PreviewTablet>
           </div>
           <PreviewMobile
-            className={`${tabletPreview && 'hidden'}`}
+            className={`${(tabletPreview || landscapePreview) && 'hidden'}`}
             chat={chat}
             isGuidedDemo={isGuidedDemo}
             guidesShown={guidesShown}
@@ -135,6 +139,16 @@ export default function SportsEventPage ({
             logout={logout}
             currentScore={currentScore}
           ></PreviewMobile>
+          <PreviewMobileLandscape
+            className={`${!landscapePreview && 'hidden'}`}
+            chat={chat}
+            isGuidedDemo={isGuidedDemo}
+            guidesShown={guidesShown}
+            visibleGuide={visibleGuide}
+            setVisibleGuide={setVisibleGuide}
+            logout={logout}
+            currentScore={currentScore}
+          ></PreviewMobileLandscape>
         </div>
       </div>
     </main>

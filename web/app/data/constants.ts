@@ -120,7 +120,7 @@ export const goldJerseyWinnersChannelId = PRODUCTION_CHANNELS.goldJerseyWinners;
 export const partyInvitesChannelId = PRODUCTION_CHANNELS.partyInvites;
 
 //export const streamUrl = "https://youtu.be/IprCMEH8Vt4";
-export const streamUrl = "https://vimeo.com/1073970603"
+export const streamUrl = "https://vimeo.com/1113299163/41a5236b31"
 
 export const reactions = ["👍", "❤️", "😂", "😮", "👏"]
 
