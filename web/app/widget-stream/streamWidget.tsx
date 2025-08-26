@@ -37,8 +37,7 @@ export default function StreamWidget ({
     '🏄': '🏄‍♀️',
     '😡': '🤬',
     '😮': '🤙',
-    '🔥': '😎',
-    '💧': '🌊'
+    '🔥': '😎'
   }
 
   const [reactions, setReactions] = useState<
@@ -49,7 +48,7 @@ export default function StreamWidget ({
     { emoji: '😡', upgraded: false },
     { emoji: '😮', upgraded: false },
     { emoji: '🔥', upgraded: false },
-    { emoji: '💧', upgraded: false }
+    { emoji: '🌊', upgraded: false }
   ])
   const [videoUrl, setVideoUrl] = useState(streamUrl)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)

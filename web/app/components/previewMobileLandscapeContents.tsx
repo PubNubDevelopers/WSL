@@ -43,6 +43,7 @@ interface SmartOverlayProps {
   qnaDemoActive: boolean
   propPicksDemoActive: boolean
   surferOddsDemoActive: boolean
+  watchPartyDemoActive: boolean
 }
 
 export default function MobileLandscapeContents({
@@ -65,7 +66,8 @@ export default function MobileLandscapeContents({
   hypeDemoActive,
   qnaDemoActive,
   propPicksDemoActive,
-  surferOddsDemoActive
+  surferOddsDemoActive,
+  watchPartyDemoActive
 }: SmartOverlayProps) {
   // Overlay management states
   const [activeOverlays, setActiveOverlays] = useState<string[]>([
@@ -463,6 +465,52 @@ export default function MobileLandscapeContents({
                 <div className='h-[calc(100%-120px)] p-8'>
                   <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner odds-demo-override'>
                     <SurferOddsWidget
+                      className='w-full h-full bg-transparent border-0'
+                      isMobilePreview={false}
+                      chat={chat}
+                      isGuidedDemo={isGuidedDemo}
+                      guidesShown={guidesShown}
+                      visibleGuide={visibleGuide}
+                      setVisibleGuide={setVisibleGuide}
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Watch Party Demo Panel - Large modern overlay when demo activated */}
+        <AnimatePresence>
+          {watchPartyDemoActive && (
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className='absolute inset-8 z-25 pointer-events-auto'
+            >
+              <div className='w-full h-full bg-gradient-to-br from-pink-900/15 via-rose-800/20 to-purple-900/15 backdrop-blur-3xl border border-pink-400/30 shadow-2xl rounded-3xl overflow-hidden'>
+                {/* Modern Header with Glass Effect */}
+                <div className='flex items-center justify-between p-8 bg-gradient-to-r from-pink-500/10 to-rose-500/10 backdrop-blur-xl border-b border-pink-400/20'>
+                  <div className='flex items-center gap-6'>
+                    <div className='w-5 h-5 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full animate-pulse shadow-lg'></div>
+                    <h2 className='text-white font-bold text-3xl tracking-wide drop-shadow-lg'>👥 Watch Party</h2>
+                  </div>
+                  <div className='flex items-center gap-4'>
+                    <div className='text-base text-pink-200 bg-pink-500/20 px-6 py-3 rounded-2xl border border-pink-400/30 backdrop-blur-sm shadow-lg'>
+                      Co-Watch Together
+                    </div>
+                    <div className='text-sm text-white/70 bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm'>
+                      Press W to toggle
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Watch Party Content with modern spacing */}
+                <div className='h-[calc(100%-120px)] p-8'>
+                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner watchparty-demo-override'>
+                    <CoWatchPartyWidget
                       className='w-full h-full bg-transparent border-0'
                       isMobilePreview={false}
                       chat={chat}

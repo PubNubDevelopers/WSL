@@ -242,6 +242,41 @@ body {
   color: #1f2937 !important;
 }
 
+.watchparty-demo-override {
+  /* Override Watch Party widget colors for dark pink background */
+  color: #1f2937 !important;
+}
+
+.watchparty-demo-override .text-wsl-dark {
+  color: #111827 !important;
+}
+
+.watchparty-demo-override .text-wsl-blue-600 {
+  color: #374151 !important;
+}
+
+.watchparty-demo-override .text-wsl-primary {
+  color: #1f2937 !important;
+}
+
+.watchparty-demo-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+}
+
+.watchparty-demo-override .text-white {
+  color: #1f2937 !important;
+}
+
+.watchparty-demo-override .bg-wsl-deep-blue {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #1f2937 !important;
+}
+
+.watchparty-demo-override .text-gray-300 {
+  color: #6b7280 !important;
+}
+
 @keyframes slide-down {
   0% {
     transform: translateY(-50%);

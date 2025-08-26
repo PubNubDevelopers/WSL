@@ -51,6 +51,7 @@ export default function PreviewMobileLandscape ({
   const [qnaDemoActive, setQnaDemoActive] = useState(false) 
   const [propPicksDemoActive, setPropPicksDemoActive] = useState(false)
   const [surferOddsDemoActive, setSurferOddsDemoActive] = useState(false)
+  const [watchPartyDemoActive, setWatchPartyDemoActive] = useState(false)
   
   const pushChannelId = isGuidedDemo ? pushChannelSalesId : pushChannelSelfId
   const currentScoreRef = useRef(currentScore)
@@ -144,6 +145,10 @@ export default function PreviewMobileLandscape ({
           setSurferOddsDemoActive(!surferOddsDemoActive)
           console.log('Surfer Odds demo toggled:', !surferOddsDemoActive)
           break
+        case 'w':
+          setWatchPartyDemoActive(!watchPartyDemoActive)
+          console.log('Watch Party demo toggled:', !watchPartyDemoActive)
+          break
         case 'escape':
           // Clear all demo modes
           setChatDemoActive(false)
@@ -152,6 +157,7 @@ export default function PreviewMobileLandscape ({
           setQnaDemoActive(false)
           setPropPicksDemoActive(false)
           setSurferOddsDemoActive(false)
+          setWatchPartyDemoActive(false)
           console.log('All demo modes cleared')
           break
       }
@@ -159,7 +165,7 @@ export default function PreviewMobileLandscape ({
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [chatDemoActive, fantasyDemoActive, hypeDemoActive, qnaDemoActive, propPicksDemoActive, surferOddsDemoActive])
+  }, [chatDemoActive, fantasyDemoActive, hypeDemoActive, qnaDemoActive, propPicksDemoActive, surferOddsDemoActive, watchPartyDemoActive])
 
   return (
     <div className={`${className || ''} w-full h-full`} tabIndex={0}>
@@ -237,6 +243,7 @@ export default function PreviewMobileLandscape ({
               qnaDemoActive={qnaDemoActive}
               propPicksDemoActive={propPicksDemoActive}
               surferOddsDemoActive={surferOddsDemoActive}
+              watchPartyDemoActive={watchPartyDemoActive}
               awardPoints={(points, message) => {
                 AwardPoints(
                   chat,
@@ -316,6 +323,16 @@ export default function PreviewMobileLandscape ({
                   <span className='text-sm'>Odds</span>
                 </div>
                 {surferOddsDemoActive && <div className='w-2 h-2 bg-cyan-400 rounded-full animate-pulse'></div>}
+              </div>
+              
+              <div className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg transition-all ${
+                watchPartyDemoActive ? 'bg-pink-500/30 border border-pink-400' : 'hover:bg-white/10'
+              }`}>
+                <div className='flex items-center gap-2'>
+                  <kbd className='bg-pink-500 text-white px-2 py-1 rounded text-sm font-bold'>W</kbd>
+                  <span className='text-sm'>Party</span>
+                </div>
+                {watchPartyDemoActive && <div className='w-2 h-2 bg-pink-400 rounded-full animate-pulse'></div>}
               </div>
               
               <div className='border-t border-white/20 mt-2 pt-2'>
