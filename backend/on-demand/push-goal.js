@@ -8,8 +8,8 @@ exports.goalScored = [
         text: 'PubNub Push Notification',
         pn_fcm: {
           data: {
-            title: 'SOU 0 - 2 LEE',
-            body: 'Leeds Score!'
+            title: 'Pipeline Masters',
+            body: 'Griffin scores 9.2!'
           },
           android: {
             priority: 'high',

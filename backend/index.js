@@ -9,8 +9,13 @@ const PubNub = require("pubnub");
 const { chat } = require("./game-data/chat.js");
 const { commentary } = require("./game-data/commentary.js");
 const { polls } = require("./game-data/polls.js");
+const { propPicks } = require("./game-data/prop-picks.js");
 const { reactions } = require("./game-data/reactions.js");
 const { stats } = require("./game-data/stats.js");
+const { fantasyLive } = require("./game-data/fantasy-live.js");
+const { surferOddsUpdates } = require("./game-data/surfer-odds.js");
+const { goldJerseyWinners } = require("./game-data/gold-jersey-winners.js");
+const { lineupRecommendations } = require("./game-data/lineup-recommendations.js");
 const { fanExcitement } = require("./on-demand/fan-excitement.js");
 const { fanFrustration } = require("./on-demand/fan-frustration.js");
 const { goalScored } = require("./on-demand/push-goal.js");
@@ -31,8 +36,8 @@ let voteCounts = {};
 // Subscribe to control events from the UI
 const CONTROL_CHANNEL = "game.server-video-control";
 const POLL_DECLARATION_CHANNEL = "game.new-poll";
-const POLL_VOTE_CHANNEL = "game.poll-votes";
-const POLL_RESULTS_CHANNEL = "game.poll-results";
+const POLL_VOTE_CHANNEL = "wsl.polls.votes";
+const POLL_RESULTS_CHANNEL = "wsl.polls.results";
 pubnub.subscribe({
   channels: [CONTROL_CHANNEL, POLL_DECLARATION_CHANNEL, POLL_VOTE_CHANNEL],
 });
@@ -96,7 +101,7 @@ async function handleControlMessage(msg) {
         messageText = "Messages Paused";
       }
       shouldSendChatMessages = !shouldSendChatMessages;
-      publishMessage("game.chat", { user: "bot-33", text: messageText }, false);
+      publishMessage("wsl.community.global", { user: "bot-33", text: messageText }, false);
       break;
     case "ON_DEMAND_SCRIPT":
       if (!intervalId) return;
@@ -113,6 +118,10 @@ async function handleControlMessage(msg) {
         onDemandScript = goalScored;
       } else if (scriptName === "push-5mins") {
         onDemandScript = fiveMinutesRemaining;
+      } else if (scriptName === "gold-jersey-drama") {
+        onDemandScript = goldJerseyWinners;
+        console.log("🏆 Gold Jersey Competition Drama");
+        delay = 1500; // Slightly slower pacing for drama effect
       } else if (scriptEmoji === "😡") {
         onDemandScript = angry;
         console.log("Angry script");
@@ -236,8 +245,8 @@ function expandRepeatedEvents(events) {
 // --------------------------------------------------------------------------------
 // Merge data from all modules and sort by the timeline
 function buildMatchScript() {
-  // All modules combined
-  let merged = [...chat, ...commentary, ...polls, ...reactions, ...stats];
+  // All modules combined - goldJerseyWinners now included in main timeline!
+  let merged = [...chat, ...commentary, ...polls, ...propPicks, ...reactions, ...stats, ...fantasyLive, ...surferOddsUpdates, ...goldJerseyWinners, ...lineupRecommendations];
 
   // Expand repeats first
   let expanded = expandRepeatedEvents(merged);
@@ -351,7 +360,7 @@ async function runLoop() {
     const eventObj = matchScript[scriptIndex];
     // Publish the event
 
-    if (!(eventObj.action.channel === "game.chat" && !shouldSendChatMessages)) {
+    if (!(eventObj.action.channel === "wsl.community.global" && !shouldSendChatMessages)) {
       await publishMessage(
         eventObj.action.channel,
         eventObj.action.data,

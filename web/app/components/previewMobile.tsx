@@ -1,13 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import UserStatus from './userStatus'
-import ChatWidget from '../widget-chat/chatWidget'
+import HeatLoungeWidget from '../widget-heat-lounge/heatLoungeWidget'
+import HypeMeterWidget from '../widget-hype-meter/hypeMeterWidget'
 import StreamWidget from '../widget-stream/streamWidget'
-import MatchStatsWidget from '../widget-matchstats/matchStatsWidget'
+import FantasyLiveWidget from '../widget-fantasy-live/fantasyLiveWidget'
 import AdvertsWidget from '../widget-adverts/advertsWidget'
 import AdvertsOfferWidget from '../widget-adverts/advertsOfferWidget'
-import PollsWidget from '../widget-polls/pollsWidget'
-import BotWidget from '../widget-bot/botWidget'
-import LiveCommentaryWidget from '../widget-liveCommentary/liveCommentaryWidget'
+import PropPickemWidget from '../widget-prop-pickem/propPickemWidget'
+import CoWatchPartyWidget from '../widget-cowatch-party/coWatchPartyWidget'
+import ClipCreatorWidget from '../widget-clip-creator/clipCreatorWidget'
+
+
+// Phase 2 New Widgets
+import SurferOddsWidget from '../widget-surfer-odds/surferOddsWidget'
+import AnnouncerQnAWidget from '../widget-announcer-qna/announcerQnAWidget'
+import TournamentBracketsWidget from '../widget-tournament-brackets/tournamentBracketsWidget'
+import LineupAnalyzerWidget from '../widget-lineup-analyzer/lineupAnalyzerWidget'
+import WinnerProfileWidget from '../widget-winner-profile/winnerProfileWidget'
 import Notification from './notification'
 import Alert from './alert'
 import GuideOverlay from './guideOverlay'
@@ -29,6 +38,9 @@ export default function PreviewMobile ({
   logout,
   currentScore
 }) {
+  // Lineup Analyzer budget state - shared across components
+  const [selectedSurfers, setSelectedSurfers] = useState([])
+  const [salaryBudget, setSalaryBudget] = useState(50000)
   const [notification, setNotification] = useState<{
     heading: string
     message: string
@@ -49,6 +61,10 @@ export default function PreviewMobile ({
   useEffect(() => {
     currentScoreRef.current = currentScore
   }, [currentScore])
+
+  // Calculate budget values
+  const currentSalary = selectedSurfers.reduce((sum, s) => sum + s.salary, 0)
+  const selectedSurfersCount = selectedSurfers.length
 
   useEffect(() => {
     if (!chat) return
@@ -105,7 +121,11 @@ export default function PreviewMobile ({
             }}
           />
         )}
-        <MobileHeader currentScore={currentScore} />
+        <MobileHeader currentScore={currentScore} budgetProps={{
+          currentSalary,
+          salaryBudget,
+          selectedSurfersCount
+        }} />
         <GuideOverlay
           id={'userPoints'}
           guidesShown={guidesShown}
@@ -170,7 +190,7 @@ export default function PreviewMobile ({
                 }}
               />
             )}
-            <ChatWidget
+            <HeatLoungeWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
               chat={chat}
@@ -180,13 +200,22 @@ export default function PreviewMobile ({
               setVisibleGuide={setVisibleGuide}
               userMentioned={messageText => {
                 setNotification({
-                  heading: 'You were mentioned',
+                  heading: 'You were mentioned in Heat Lounge',
                   message: messageText,
                   imageUrl: null
                 })
               }}
             />
-            <PollsWidget
+            <HypeMeterWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+            />
+            <PropPickemWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
               chat={chat}
@@ -204,7 +233,7 @@ export default function PreviewMobile ({
                 )
               }}
             />
-            <MatchStatsWidget
+            <FantasyLiveWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
               chat={chat}
@@ -213,7 +242,7 @@ export default function PreviewMobile ({
               visibleGuide={visibleGuide}
               setVisibleGuide={setVisibleGuide}
             />
-            <BotWidget
+            <SurferOddsWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
               chat={chat}
@@ -222,14 +251,66 @@ export default function PreviewMobile ({
               visibleGuide={visibleGuide}
               setVisibleGuide={setVisibleGuide}
             />
-            <LiveCommentaryWidget
+            <LineupAnalyzerWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
               chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+              selectedSurfers={selectedSurfers}
+              setSelectedSurfers={setSelectedSurfers}
+              salaryBudget={salaryBudget}
+              setSalaryBudget={setSalaryBudget}
+            />
+            <TournamentBracketsWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
               guidesShown={guidesShown}
               visibleGuide={visibleGuide}
               setVisibleGuide={setVisibleGuide}
             />
+            <AnnouncerQnAWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+            />
+            <WinnerProfileWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+            />
+            <CoWatchPartyWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+            />
+            <ClipCreatorWidget
+              className={`${defaultWidgetClasses}`}
+              isMobilePreview={true}
+              chat={chat}
+              isGuidedDemo={isGuidedDemo}
+              guidesShown={guidesShown}
+              visibleGuide={visibleGuide}
+              setVisibleGuide={setVisibleGuide}
+            />
+
+
             <AdvertsWidget
               className={`${defaultWidgetClasses}`}
               isMobilePreview={true}
@@ -254,11 +335,22 @@ export default function PreviewMobile ({
     </div>
   )
 
-  function MobileHeader ({ currentScore }) {
+  function MobileHeader ({ currentScore, budgetProps }) {
     return (
       <div className='flex flex-col w-full px-4 py-[11.5px]'>
         <UserStatus chat={chat} logout={logout} currentScore={currentScore} />
-        <div className='text-2xl font-bold'>Live Stream</div>
+        <div className='flex items-center justify-between'>
+          <div className='text-2xl font-bold'>Live Stream</div>
+          {budgetProps && (
+            <div className='flex items-center gap-1 text-xs bg-wsl-blue-50 px-2 py-1 rounded-md border border-wsl-blue-200'>
+              <span className='font-medium text-wsl-primary'>{budgetProps.selectedSurfersCount}/6</span>
+              <span className='text-wsl-blue-600'>•</span>
+              <span className='font-medium text-wsl-dark'>${(budgetProps.currentSalary / 1000).toFixed(0)}K</span>
+              <span className='text-wsl-blue-600'>/</span>
+              <span className='font-medium text-wsl-success'>${(budgetProps.salaryBudget / 1000).toFixed(0)}K</span>
+            </div>
+          )}
+        </div>
       </div>
     )
   }

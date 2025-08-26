@@ -5,7 +5,8 @@ import GuideOverlay from '../components/guideOverlay'
 import {
   dataControlOccupancyChannelId,
   serverVideoControlChannelId,
-  streamReactionsChannelId
+  streamReactionsChannelId,
+  heatLoungeTranslationsChannelId
 } from '../data/constants'
 import {
   Chat,
@@ -17,7 +18,7 @@ import {
 import ChatMessage from './components/ChatMessage'
 import MessageInput from './components/MessageInput'
 
-interface ChatWidgetProps {
+interface HeatLoungeWidgetProps {
   className: string
   isMobilePreview: boolean
   chat: Chat
@@ -34,7 +35,7 @@ export interface Restriction {
   reason: string | number | boolean | undefined
 }
 
-export default function ChatWidget ({
+export default function HeatLoungeWidget ({
   className,
   isMobilePreview,
   chat,
@@ -43,7 +44,7 @@ export default function ChatWidget ({
   visibleGuide,
   setVisibleGuide,
   userMentioned
-}: ChatWidgetProps) {
+}: HeatLoungeWidgetProps) {
   // Channel state
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null)
@@ -53,7 +54,7 @@ export default function ChatWidget ({
   const [messages, setMessages] = useState<Message[]>([])
   const [messageInput, setMessageInput] = useState('')
 
-  // UI state
+  // UI state  
   const [showChannelCreate, setShowChannelCreate] = useState(false)
   const [channelName, setChannelName] = useState('')
   const [channelType, setChannelType] = useState('public')
@@ -67,6 +68,28 @@ export default function ChatWidget ({
   const [simulatedOccupancy, setSimulatedOccupancy] = useState(0)
   const [activeChannelRestrictions, setActiveChannelRestrictions] =
     useState<Restriction | null>(null)
+
+  // WSL Heat Lounge specific state
+  const [heatStatus, setHeatStatus] = useState<'upcoming' | 'live' | 'completed'>('live')
+  const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'pt' | 'es'>('en')
+  const [globalPresence, setGlobalPresence] = useState(2847) // Simulated global viewers
+  
+  // Translation state
+  const [translations, setTranslations] = useState<Record<string, { originalText: string; translatedText: string; language: string; confidence: number }>>({})
+  const [showTranslations, setShowTranslations] = useState(true)
+  const [countryBreakdown, setCountryBreakdown] = useState({
+    'USA': 31,
+    'Brazil': 23, 
+    'Hawaii': 18,
+    'Australia': 12,
+    'Other': 16
+  })
+  const [currentHeat, setCurrentHeat] = useState({
+    surfer1: 'Griffin Colapinto',
+    surfer2: 'John John Florence', 
+    location: 'Pipeline, Hawaii',
+    heatNumber: 7
+  })
 
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
@@ -189,36 +212,62 @@ export default function ChatWidget ({
   }, [messages])
 
   /**
-   * Fetches all available channels and organizes them by type
+   * Creates or gets WSL Heat Lounge channel
    */
   const fetchChannels = async () => {
     if (!chat) return
 
     try {
-      // Get all channels from PubNub Chat SDK
-      const result = await chat.getChannels()
-      const channels = result.channels || []
-
-      // Sort channels by type
-      const publicChan: Channel[] = []
-
-      for (const channel of channels) {
-        if (!channel) continue
-
-        // Add channel to appropriate array based on type
-        if (channel.type === 'public') {
-          publicChan.push(channel)
-        }
+      // Use a simple, consistent channel ID for the global heat lounge
+      const heatChannelId = 'wsl.community.global'
+      
+      // Try to get existing heat lounge channel, or create it
+      let heatChannel: Channel | null = null
+      
+      try {
+        heatChannel = await chat.getChannel(heatChannelId)
+      } catch {
+        // Channel doesn't exist, create it
+        console.log('Creating new WSL Heat Lounge channel...')
+        const channelResult = await chat.createPublicConversation({
+          channelId: heatChannelId,
+          channelData: {
+            name: 'WSL Heat Lounge',
+            description: 'Global WSL community chat for all surf fans',
+            custom: {
+              type: 'global_chat',
+              topic: 'general_surf_discussion'
+            }
+          }
+        })
+        heatChannel = channelResult.channel
       }
 
-      setPublicChannels(publicChan)
-
-      // Set default active channel if none selected
-      if (!activeChannelId && publicChan.length > 0) {
-        setActiveChannelId(publicChan[0].id)
+      if (heatChannel) {
+        console.log('Heat Lounge channel ready:', heatChannel.id)
+        setPublicChannels([heatChannel])
+        setActiveChannelId(heatChannel.id)
+        
+        // Simulate realistic global presence fluctuation
+        const basePresence = 2847
+        const fluctuation = Math.floor(Math.random() * 40 - 20) // ±20 viewers
+        setGlobalPresence(basePresence + fluctuation)
       }
+
     } catch (error) {
-      console.error('Error fetching channels:', error)
+      console.error('Error setting up WSL heat lounge:', error)
+      // Fallback: try to use any existing channel
+      try {
+        const result = await chat.getChannels()
+        if (result.channels && result.channels.length > 0) {
+          const fallbackChannel = result.channels[0]
+          setPublicChannels([fallbackChannel])
+          setActiveChannelId(fallbackChannel.id)
+          console.log('Using fallback channel:', fallbackChannel.id)
+        }
+      } catch (fallbackError) {
+        console.error('Fallback channel setup also failed:', fallbackError)
+      }
     }
   }
 
@@ -260,16 +309,19 @@ export default function ChatWidget ({
       //setWhoIsPresent(await chat.whoIsPresent(activeChannelId));
 
       // Get channel history
-      /*
       try {
-        const history = await channel.getHistory()
+        const history = await channel.getHistory({
+          count: 25,
+          includeActions: true,
+          includeMeta: true,
+          includeUUID: true
+        })
 
         setMessages(history.messages || [])
       } catch (error) {
         console.error('Error fetching message history:', error)
         setMessages([])
       }
-        */
 
       // Initialize cleanup functions
       let unsubscribeMessages = () => {}
@@ -330,6 +382,9 @@ export default function ChatWidget ({
           }
         })
       reactionsSubscription.subscribe()
+
+      // Note: Translations now come embedded in message metadata (no separate channel needed)
+      // The new translation system adds translations directly to message.meta
 
       // Return cleanup function
       return () => {
@@ -477,30 +532,10 @@ export default function ChatWidget ({
       />
 
       {!activeChannel && (
-        <div className='text-lg border-b pb-2 flex items-center bg-navy900 overflow-hidden rounded-t px-[16px] py-[12px] text-white text-[16px] font-[600] leading-[24px] h-[56px]'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='20'
-            height='20'
-            viewBox='0 0 20 20'
-            fill='none'
-          >
-            <path
-              d='M12.4998 3.33341V9.16675H4.30817L3.33317 10.1417V3.33341H12.4998ZM13.3332 1.66675H2.49984C2.0415 1.66675 1.6665 2.04175 1.6665 2.50008V14.1667L4.99984 10.8334H13.3332C13.7915 10.8334 14.1665 10.4584 14.1665 10.0001V2.50008C14.1665 2.04175 13.7915 1.66675 13.3332 1.66675ZM17.4998 5.00008H15.8332V12.5001H4.99984V14.1667C4.99984 14.6251 5.37484 15.0001 5.83317 15.0001H14.9998L18.3332 18.3334V5.83342C18.3332 5.37508 17.9582 5.00008 17.4998 5.00008Z'
-              fill='white'
-            />
-          </svg>
-          <div className={'pl-[16px]'}>
-            {showChannelCreate ? 'Create channel' : 'Chats'}
-          </div>
-          <div className={'grow'} />
-          <button
-            className='cursor-pointer'
-            onClick={() => setShowChannelCreate(!showChannelCreate)}
-          >
-            {showChannelCreate ? (
-              'Cancel'
-            ) : (
+        <div className='text-lg border-b pb-2 flex flex-col bg-wsl-deep-blue overflow-hidden rounded-t text-white'>
+          {/* Heat Lounge Header - Focused on Chat */}
+          <div className='px-[16px] py-[12px] flex items-center justify-between h-[56px]'>
+            <div className='flex items-center gap-3'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='20'
@@ -509,19 +544,112 @@ export default function ChatWidget ({
                 fill='none'
               >
                 <path
-                  d='M15.8332 10.8334H10.8332V15.8334H9.1665V10.8334H4.1665V9.16675H9.1665V4.16675H10.8332V9.16675H15.8332V10.8334Z'
-                  fill='#FAFAFA'
+                  d='M12.4998 3.33341V9.16675H4.30817L3.33317 10.1417V3.33341H12.4998ZM13.3332 1.66675H2.49984C2.0415 1.66675 1.6665 2.04175 1.6665 2.50008V14.1667L4.99984 10.8334H13.3332C13.7915 10.8334 14.1665 10.4584 14.1665 10.0001V2.50008C14.1665 2.04175 13.7915 1.66675 13.3332 1.66675ZM17.4998 5.00008H15.8332V12.5001H4.99984V14.1667C4.99984 14.6251 5.37484 15.0001 5.83317 15.0001H14.9998L18.3332 18.3334V5.83342C18.3332 5.37508 17.9582 5.00008 17.4998 5.00008Z'
+                  fill='white'
                 />
               </svg>
-            )}
-          </button>
+              <div className='text-[16px] font-[600] leading-[24px]'>
+                Heat Lounge
+              </div>
+            </div>
+            
+            {/* Language Toggle */}
+            <div className='flex gap-1'>
+              {(['en', 'pt', 'es'] as const).map(lang => (
+                <button
+                  key={lang}
+                  onClick={() => setSelectedLanguage(lang)}
+                  className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                    selectedLanguage === lang 
+                      ? 'bg-white text-wsl-primary-blue' 
+                      : 'bg-wsl-ocean-blue text-white hover:bg-wsl-light-blue hover:text-wsl-primary-blue'
+                  }`}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Heat Context Bar */}
+          <div className='px-[16px] py-[6px] bg-wsl-primary-blue text-center'>
+            <div className='text-sm font-medium'>
+              <span className="text-white">{currentHeat.surfer1}</span>
+              <span className="text-wsl-light-blue mx-2">vs</span>
+              <span className="text-white">{currentHeat.surfer2}</span>
+              <span className="text-wsl-light-blue mx-2">•</span>
+              <span className="text-wsl-light-blue text-xs">{currentHeat.location}</span>
+            </div>
+          </div>
         </div>
       )}
 
       {activeChannel && (
-        <div className='text-lg border-b pb-2 flex items-center bg-navy900 overflow-hidden rounded-t px-[16px] py-[12px] text-white text-[16px] font-[600] leading-[24px] h-[56px]'>
+        <div className='text-lg border-b pb-2 flex flex-col bg-wsl-deep-blue overflow-hidden rounded-t text-white'>
+          {/* Active Heat Lounge Header */}
+          <div className='px-[16px] py-[12px] flex items-center justify-between h-[56px]'>
+            <div className='flex items-center gap-3'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='20'
+                height='20'
+                viewBox='0 0 20 20'
+                fill='none'
+              >
+                <path
+                  d='M12.4998 3.33341V9.16675H4.30817L3.33317 10.1417V3.33341H12.4998ZM13.3332 1.66675H2.49984C2.0415 1.66675 1.6665 2.04175 1.6665 2.50008V14.1667L4.99984 10.8334H13.3332C13.7915 10.8334 14.1665 10.4584 14.1665 10.0001V2.50008C14.1665 2.04175 13.7915 1.66675 13.3332 1.66675ZM17.4998 5.00008H15.8332V12.5001H4.99984V14.1667C4.99984 14.6251 5.37484 15.0001 5.83317 15.0001H14.9998L18.3332 18.3334V5.83342C18.3332 5.37508 17.9582 5.00008 17.4998 5.00008Z'
+                  fill='white'
+                />
+              </svg>
+              <div className='text-[16px] font-[600] leading-[24px]'>
+                Heat Lounge
+              </div>
+            </div>
+            
+            {/* Language Toggle & Translation Toggle */}
+            <div className='flex items-center gap-2'>
+              <div className='flex gap-1'>
+                {(['en', 'pt', 'es'] as const).map(lang => (
+                  <button
+                    key={lang}
+                    onClick={() => setSelectedLanguage(lang)}
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                      selectedLanguage === lang 
+                        ? 'bg-white text-wsl-primary-blue' 
+                        : 'bg-wsl-ocean-blue text-white hover:bg-wsl-light-blue hover:text-wsl-primary-blue'
+                    }`}
+                  >
+                    {lang.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowTranslations(!showTranslations)}
+                className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                  showTranslations 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-gray-500 text-white hover:bg-green-400'
+                }`}
+                title={showTranslations ? 'Hide translations' : 'Show translations'}
+              >
+                T
+              </button>
+            </div>
+          </div>
+          
+          {/* Heat Context Bar */}
+          <div className='px-[16px] py-[6px] bg-wsl-primary-blue text-center'>
+            <div className='text-sm font-medium'>
+              <span className="text-white">{currentHeat.surfer1}</span>
+              <span className="text-wsl-light-blue mx-2">vs</span>
+              <span className="text-white">{currentHeat.surfer2}</span>
+              <span className="text-wsl-light-blue mx-2">•</span>
+              <span className="text-wsl-light-blue text-xs">{currentHeat.location}</span>
+            </div>
+          </div>
+          
           <div
-            className={'rounded-full w-[32px] h-[32px] !bg-cover bg-gray-100'}
+            className={'rounded-full w-[32px] h-[32px] !bg-cover bg-gray-100 hidden'}
             style={
               activeChannel.custom?.profileUrl
                 ? {
@@ -578,6 +706,9 @@ export default function ChatWidget ({
                       currentUser={chat.currentUser}
                       users={users}
                       channel={activeChannel}
+                      translations={translations}
+                      showTranslations={showTranslations}
+                      selectedLanguage={selectedLanguage}
                     />
                   )
                 })}

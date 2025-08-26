@@ -15,6 +15,29 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "var(--primary)",
+        
+        // WSL Brand Colors (Ocean Blue Palette)
+        "wsl-primary-blue": "var(--wsl-primary-blue)",
+        "wsl-deep-blue": "var(--wsl-deep-blue)", 
+        "wsl-ocean-blue": "var(--wsl-ocean-blue)",
+        "wsl-light-blue": "var(--wsl-light-blue)",
+        
+        // WSL Grays
+        "wsl-white": "var(--wsl-white)",
+        "wsl-gray-50": "var(--wsl-gray-50)",
+        "wsl-gray-100": "var(--wsl-gray-100)",
+        "wsl-gray-500": "var(--wsl-gray-500)",
+        "wsl-gray-700": "var(--wsl-gray-700)",
+        "wsl-gray-900": "var(--wsl-gray-900)",
+        
+        // WSL Accent Colors
+        "wsl-success-green": "var(--wsl-success-green)",
+        "wsl-warning-orange": "var(--wsl-warning-orange)",
+        "wsl-rank-gold": "var(--wsl-rank-gold)",
+        "wsl-rank-silver": "var(--wsl-rank-silver)",
+        "wsl-rank-bronze": "var(--wsl-rank-bronze)",
+
+        // Legacy colors (keep for now to avoid breaking changes)
         navy900: "#001143",
         navy800: "#1A2956",
         navy700: "#334155",
@@ -25,16 +48,7 @@ export default {
         navy200: "#E2E8F0",
         navy100: "#F1F5F9",
         navy50: "#F8FAFC",
-        teal900: "#004756",
-        teal800: "#065B6A",
-        teal700: "#216F7B",
-        teal600: "#3C828C",
-        teal500: "#57969C",
-        teal400: "#72A9AD",
-        teal300: "#92BDC0",
-        teal200: "#B2D0D2",
-        teal100: "#D1E4E5",
-        teal50: "#F1F7F7",
+        
         neutral900: "#171717",
         neutral800: "#262626",
         neutral700: "#404040",
@@ -45,12 +59,6 @@ export default {
         neutral200: "#E5E5E5",
         neutral100: "#F5F5F5",
         neutral50: "#FAFAFA",
-        brandAccent1: "#001862",
-        brandAccent2: "#001E79",
-        brandAccent3: "#589CFF",
-        brandAccent4: "#CBDDF4",
-        brandAccent5: "#EEF5FF",        
-        cherry: "#CD2026",
 
         success800: "#166534",
         success700: "#15803D",
@@ -75,9 +83,6 @@ export default {
         warning500: "#F59E0B",
         warning100: "#FEF3C7",
         warning50: "#FFFBEB",
-
-        appYellow1: "#FFCF40",
-        appYellow2: "#B59410",
 
       },
       screens: {

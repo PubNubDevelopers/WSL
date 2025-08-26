@@ -8,8 +8,8 @@ exports.fiveMinutesRemaining = [
         text: 'PubNub Push Notification',
         pn_fcm: {
           data: {
-            title: 'Injury Time',
-            body: "It's nearly all over for Southampton"
+            title: 'Final Minutes',
+            body: "Griffin leading with 2 minutes left!"
           },
           android: {
             priority: 'high',

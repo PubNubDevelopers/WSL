@@ -3,9 +3,31 @@
 @tailwind utilities;
 
 :root {
+  /* WSL Brand Colors - Ocean Blue Palette */
+  --wsl-primary-blue: #4A90E2;        /* Main brand blue */
+  --wsl-deep-blue: #2C5282;           /* Header/navigation */
+  --wsl-ocean-blue: #3182CE;          /* Accent elements */
+  --wsl-light-blue: #E6F3FF;          /* Background tints */
+  
+  /* Base Colors */
   --background: #ffffff;
-  --foreground: #171717;
-  --primary: #171717;
+  --foreground: #1A202C;               /* WSL dark text */
+  --primary: #4A90E2;                  /* WSL primary blue */
+  
+  /* WSL Secondary Colors */
+  --wsl-white: #FFFFFF;               /* Primary background */
+  --wsl-gray-50: #F7FAFC;             /* Card backgrounds */
+  --wsl-gray-100: #EDF2F7;            /* Dividers */
+  --wsl-gray-500: #A0AEC0;            /* Secondary text */
+  --wsl-gray-700: #4A5568;            /* Primary text */
+  --wsl-gray-900: #1A202C;            /* Headers */
+  
+  /* WSL Accent Colors */
+  --wsl-success-green: #48BB78;       /* Live indicators */
+  --wsl-warning-orange: #ED8936;      /* Notifications */
+  --wsl-rank-gold: #D69E2E;           /* #1 rankings */
+  --wsl-rank-silver: #A0AEC0;         /* #2 rankings */
+  --wsl-rank-bronze: #C05621;         /* #3 rankings */
 }
 
 /*

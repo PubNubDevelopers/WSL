@@ -1,0 +1,99 @@
+export default async (request) => {
+  const vault = require('vault');
+  const xhr = require('xhr');
+
+  const get = (obj, path, defaultValue) => {
+    try {
+      return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj) ?? defaultValue;
+    } catch (_) {
+      return defaultValue;
+    }
+  };
+
+  try {
+    const channel = request.channel || get(request, 'params.channel');
+    const message = request.message || {};
+    request.meta = request.meta || {};
+
+    // Extract text payload (string or common shapes)
+    let text = '';
+    if (typeof message === 'string') text = message;
+    else if (typeof message.text === 'string') text = message.text;
+    else if (message && message.text && typeof message.text.body === 'string') text = message.text.body;
+    else if (typeof message.message === 'string') text = message.message;
+    else if (typeof message.content === 'string') text = message.content;
+
+    if (!text || !channel) return request.ok();
+
+    // Skip non-textual/system-ish messages based on meta
+    const msgType = (request.meta && request.meta.messageType) || 'text';
+    if (msgType !== 'text') return request.ok();
+
+    const sourceLang = typeof request.meta.lang === 'string' ? request.meta.lang : undefined;
+
+    // Objects lookups require subscribe key
+    const subscribeKey = await vault.get('SUBSCRIBE_KEY');
+    if (!subscribeKey) return request.ok();
+
+    // Find recipient (the other member on the channel)
+    const membersUrl = `https://ps.pndsn.com/v2/objects/sub-key/${encodeURIComponent(subscribeKey)}/channels/${encodeURIComponent(channel)}/uuids`;
+    const membersRes = await xhr.fetch(membersUrl, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+    const membersJson = await membersRes.json().catch(async () => ({ raw: await membersRes.text().catch(() => '') }));
+    if (!membersRes.ok || !membersJson || !Array.isArray(membersJson.data)) return request.ok();
+
+    const publisher = get(request, 'uuid') || get(request, 'meta.publisher');
+    const memberIds = membersJson.data.map((m) => m.uuid && m.uuid.id).filter(Boolean);
+    const otherId = memberIds.find((id) => id && id !== publisher) || memberIds[0];
+    if (!otherId) return request.ok();
+
+    // Read recipient language
+    const userUrl = `https://ps.pndsn.com/v2/objects/sub-key/${encodeURIComponent(subscribeKey)}/uuids/${encodeURIComponent(otherId)}`;
+    const userRes = await xhr.fetch(userUrl, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+    const userJson = await userRes.json().catch(async () => ({ raw: await userRes.text().catch(() => '') }));
+    if (!userRes.ok || !userJson) return request.ok();
+
+    const targetLangRaw = get(userJson, 'data.custom.language');
+    const targetLang = typeof targetLangRaw === 'string' && targetLangRaw.trim() ? targetLangRaw.trim() : undefined;
+    if (!targetLang) return request.ok();
+
+    // If languages match, skip
+    if (sourceLang && targetLang && sourceLang.toLowerCase() === targetLang.toLowerCase()) return request.ok();
+
+    // Call DeepL directly
+    const deeplKey = await vault.get('DEEPL_AUTH_KEY');
+    if (!deeplKey) {
+      // Fallback deterministic annotation
+      request.meta.translatedText = `[${targetLang}] ${text}`;
+      request.meta.translatedLang = targetLang;
+      return request.ok();
+    }
+
+    // Enforce safe payload size for DeepL
+    const trimmed = String(text).slice(0, 5000);
+    const deeplUrl = 'https://api.deepl.com/v2/translate';
+    const params = `text=${encodeURIComponent(trimmed)}&target_lang=${encodeURIComponent(String(targetLang).toUpperCase())}${sourceLang ? `&source_lang=${encodeURIComponent(String(sourceLang).toUpperCase())}` : ''}`;
+
+    try {
+      const res = await xhr.fetch(deeplUrl, {
+        method: 'POST',
+        headers: { 'Authorization': `DeepL-Auth-Key ${deeplKey}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params,
+      });
+      const json = await res.json().catch(async () => ({ raw: await res.text().catch(() => '') }));
+      if (res.ok && json && json.translations && json.translations[0] && json.translations[0].text) {
+        request.meta.translatedText = json.translations[0].text;
+        request.meta.translatedLang = targetLang;
+      } else {
+        request.meta.translatedText = `[${targetLang}] ${trimmed}`;
+        request.meta.translatedLang = targetLang;
+      }
+    } catch (_) {
+      request.meta.translatedText = `[${targetLang}] ${trimmed}`;
+      request.meta.translatedLang = targetLang;
+    }
+
+    return request.ok();
+  } catch (e) {
+    return request.ok();
+  }
+};

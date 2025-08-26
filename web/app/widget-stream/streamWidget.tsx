@@ -12,7 +12,7 @@ import {
 import { PlayCircle } from '../side-menu/sideMenuIcons'
 import Alert from '../components/alert'
 import GuideOverlay from '../components/guideOverlay'
-import LiveStreamPoll from '../widget-polls/liveStreamPoll'
+
 import ReactPlayer from 'react-player'
 import { actionCompleted } from 'pubnub-demo-integration'
 
@@ -34,22 +34,22 @@ export default function StreamWidget ({
   } | null>(null)
   const emojiMap = {
     '👏': '🙌',
-    '😢': '😭',
+    '🏄': '🏄‍♀️',
     '😡': '🤬',
-    '😮': '🤯',
+    '😮': '🤙',
     '🔥': '😎',
-    '🎉': '🥳'
+    '💧': '🌊'
   }
 
   const [reactions, setReactions] = useState<
     { emoji: string; upgraded: boolean }[]
   >([
     { emoji: '👏', upgraded: false },
-    { emoji: '😢', upgraded: false },
+    { emoji: '🏄', upgraded: false },
     { emoji: '😡', upgraded: false },
     { emoji: '😮', upgraded: false },
     { emoji: '🔥', upgraded: false },
-    { emoji: '🎉', upgraded: false }
+    { emoji: '💧', upgraded: false }
   ])
   const [videoUrl, setVideoUrl] = useState(streamUrl)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
@@ -382,7 +382,7 @@ export default function StreamWidget ({
           <span>
             Some emoji (😡) are configured to{' '}
             <span className='font-semibold'>
-              trigger dynamic polls, or serve dynamic ads
+              serve dynamic ads and trigger engagement events
             </span>{' '}
             - this is all handled by{' '}
             <span className='font-semibold'>PubNub Illuminate</span> which
@@ -397,15 +397,7 @@ export default function StreamWidget ({
 
       <ReactionsBar />
 
-      <LiveStreamPoll
-        isMobilePreview={isMobilePreview}
-        chat={chat}
-        isGuidedDemo={isGuidedDemo}
-        guidesShown={guidesShown}
-        visibleGuide={visibleGuide}
-        setVisibleGuide={setVisibleGuide}
-        awardPoints={awardPoints}
-      />
+
     </div>
   )
 

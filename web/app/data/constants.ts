@@ -1,21 +1,101 @@
+// Production WSL Channel Configuration
+export const PRODUCTION_CHANNELS = {
+  // Main community channels
+  heatLounge: "wsl.community.global",
+  translations: "wsl.translations.global",
+  
+  // Location-specific channels
+  pipeline: "wsl.spots.pipeline-hawaii",
+  trestles: "wsl.spots.trestles-california",
+  teahupoo: "wsl.spots.teahupoo-tahiti",
+  
+  // Event-specific channels
+  currentHeat: "wsl.events.2024-pipeline-masters.heat-final",
+  heatUpdates: "wsl.events.heat-updates",
+  
+  // Feature channels
+  clipRequests: "wsl.clips.requests",
+  clipNotifications: "wsl.clips.notifications",
+  
+  // Fantasy and predictions
+  fantasyLive: "wsl.fantasy-live",
+  propPickem: "wsl.prop-pickem",
+  
+  // Real-time features
+  streamReactions: "wsl.stream.reactions",
+  hypeUpdates: "wsl.stream.hype",
+  polls: "wsl.polls.live",
+  pollResults: "wsl.polls.results",
+  
+  // Moderation and analytics
+  moderationAlerts: "wsl.moderation.alerts",
+  analytics: "wsl.analytics.realtime",
+  
+  // User-specific channels
+  getUserNotifications: (userId: string) => `wsl.user.${userId}.notifications`,
+  getUserInvitations: (userId: string) => `wsl.user.${userId}.invitations`,
+  
+  // Private channels (Access Manager controlled)
+  getPrivateParty: (partyId: string) => `wsl.private.party-${partyId}`,
+  
+  // Admin channels
+  adminAlerts: "wsl.admin.alerts",
+  systemEvents: "wsl.system.events",
+  
+  // Phase 2 Channels - Advanced Competition Features
+  // Odds & Conditions
+  surferOdds: "wsl.odds.live",
+  surfConditions: "wsl.conditions.updates", 
+  betOddsASD: "wsl.odds.asd-feed",
+  
+  // Enhanced Fantasy
+  multiplierTriggers: "wsl.fantasy.multiplier-triggers",
+  pointWagers: "wsl.fantasy.point-wagers",
+  
+  // Q&A System
+  qnaSubmissions: "wsl.qna.submissions",
+  qnaFeatured: "wsl.qna.featured", 
+  announcerResponses: "wsl.qna.responses",
+  
+  // Tournament & Analysis
+  brackets: "wsl.tournament.brackets",
+  lineupRecommendations: "wsl.lineup.recommendations",
+  
+  // Winner Profiles
+  achievements: "wsl.profiles.achievements",
+  goldJerseyWinners: "wsl.profiles.winners",
+  
+  // Enhanced Watch Parties
+  getPartyChat: (partyId: string) => `wsl.private.party-${partyId}.chat`,
+  partyInvites: "wsl.parties.invitations"
+};
+
+// Legacy channel mappings for backwards compatibility
 export const channelData = [
   {
-    id: "game.chat",
-    name: "Game Chat",
-    description: "Public conversation about the game",
-    avatar:
-      "https://pn-solution-live-events.netlify.app/avatars/group/chat2.png",
+    id: PRODUCTION_CHANNELS.heatLounge,
+    name: "Heat Lounge",
+    description: "Global WSL community chat",
+    avatar: "/avatars/group/chat1.png",
     createInAppContext: true,
   },
 ];
-export const chatChannelId = channelData[0].id;
-export const liveCommentaryChannelId = "game.commentary";
-export const streamReactionsChannelId = "game.stream-reactions";
-export const pollDeclarations = "game.new-poll";
-export const pollVotes = "game.poll-votes";
-export const pollResults = "game.poll-results";
-export const illuminatePollTesting = "game.illuminate-poll";
-export const matchStatsChannelId = "game.match-stats";
+
+export const chatChannelId = PRODUCTION_CHANNELS.heatLounge;
+export const liveCommentaryChannelId = PRODUCTION_CHANNELS.heatUpdates;
+export const streamReactionsChannelId = PRODUCTION_CHANNELS.streamReactions;
+export const hypeUpdatesChannelId = PRODUCTION_CHANNELS.hypeUpdates;
+export const pollDeclarations = PRODUCTION_CHANNELS.polls;
+export const pollVotes = PRODUCTION_CHANNELS.polls;
+export const pollResults = PRODUCTION_CHANNELS.pollResults;
+export const illuminatePollTesting = PRODUCTION_CHANNELS.polls;
+export const matchStatsChannelId = PRODUCTION_CHANNELS.currentHeat;
+export const fantasyLiveChannelId = PRODUCTION_CHANNELS.fantasyLive;
+export const propPickemChannelId = PRODUCTION_CHANNELS.propPickem;
+export const heatLoungeTranslationsChannelId = PRODUCTION_CHANNELS.translations;
+export const coWatchPartyChannelPrefix = "wsl.private.party";
+export const clipRequestsChannelId = PRODUCTION_CHANNELS.clipRequests;
+export const clipNotificationsChannelId = PRODUCTION_CHANNELS.clipNotifications;
 export const pushChannelSelfId = "game.push-self";
 export const pushChannelSalesId = "game.push-sales";
 export const dynamicAdChannelId = "game.dynamic-ad";
@@ -23,6 +103,21 @@ export const clientVideoControlChannelId = "game.client-video-control";
 export const serverVideoControlChannelId = "game.server-video-control";
 export const illuminateUpgradeReaction = "illuminate-upgrade-reaction";
 export const dataControlOccupancyChannelId = "game.dataControlsOccupancy"
+
+// Phase 2 Channel Exports
+export const surferOddsChannelId = PRODUCTION_CHANNELS.surferOdds;
+export const surfConditionsChannelId = PRODUCTION_CHANNELS.surfConditions;
+export const betOddsASDChannelId = PRODUCTION_CHANNELS.betOddsASD;
+export const multiplierTriggersChannelId = PRODUCTION_CHANNELS.multiplierTriggers;
+export const pointWagersChannelId = PRODUCTION_CHANNELS.pointWagers;
+export const qnaSubmissionsChannelId = PRODUCTION_CHANNELS.qnaSubmissions;
+export const qnaFeaturedChannelId = PRODUCTION_CHANNELS.qnaFeatured;
+export const announcerResponsesChannelId = PRODUCTION_CHANNELS.announcerResponses;
+export const bracketsChannelId = PRODUCTION_CHANNELS.brackets;
+export const lineupRecommendationsChannelId = PRODUCTION_CHANNELS.lineupRecommendations;
+export const achievementsChannelId = PRODUCTION_CHANNELS.achievements;
+export const goldJerseyWinnersChannelId = PRODUCTION_CHANNELS.goldJerseyWinners;
+export const partyInvitesChannelId = PRODUCTION_CHANNELS.partyInvites;
 
 //export const streamUrl = "https://youtu.be/IprCMEH8Vt4";
 export const streamUrl = "https://vimeo.com/1073970603"
@@ -86,31 +181,114 @@ export const enum AlertType {
   NEW_EMOJI = 2,
 }
 
-export const testUsers = [
+// Production surf community users for testing
+export const realSurfUsers = [
   {
-    id: "user-01",
-    name: "Alex Carter",
-    avatar: "https://pn-solution-live-events.netlify.app/avatars/m/02.jpg",
-    email: "alex.carter@example.com",
-    location: "San Francisco, USA",
-    jobTitle: "Data Scientist",
-    currentMood: "Thoughtful",
-    externalId: "9Z8Y7X6W5V4U3T2S",
-    socialHandle: "@alexcarter_5432",
+    id: "wsl_user_001",
+    name: "Maya Rodriguez",
+    avatar: "/avatars/f/01.jpg",
+    email: "maya.rodriguez@gmail.com",
+    location: "Huntington Beach, California",
+    surfLevel: "advanced",
+    homeBreak: "Huntington Pier",
+    currentMood: "Stoked",
+    externalId: "maya_hb_surfer",
+    socialHandle: "@maya_waves",
     timezone: "America/Los_Angeles",
+    favoriteSpots: ["pipeline", "trestles", "mavericks"],
+    role: "verified_surfer",
+    isVerified: true,
+    joinedDate: "2024-01-15T08:00:00Z"
   },
   {
-    id: "user-02",
-    name: "Emily Johnson",
-    avatar: "https://pn-solution-live-events.netlify.app/avatars/f/01.jpg",
-    email: "emily.johnson@example.com",
-    location: "New York, USA",
-    jobTitle: "Product Manager",
-    currentMood: "Excited",
-    externalId: "A1B2C3D4E5F6G7H8",
-    socialHandle: "@emilyjohnson_56498",
-    timezone: "America/New_York",
+    id: "wsl_user_002",
+    name: "Jake Thompson",
+    avatar: "/avatars/m/01.jpg",
+    email: "jake.thompson@outlook.com",
+    location: "Gold Coast, Australia",
+    surfLevel: "pro",
+    homeBreak: "Snapper Rocks",
+    currentMood: "Focused",
+    externalId: "jake_gc_pro",
+    socialHandle: "@jakethompson_surf",
+    timezone: "Australia/Brisbane",
+    favoriteSpots: ["pipeline", "teahupoo", "bells-beach"],
+    role: "verified_surfer",
+    isVerified: true,
+    joinedDate: "2023-11-20T05:30:00Z"
   },
+  {
+    id: "wsl_user_003",
+    name: "Sofia Santos",
+    avatar: "/avatars/f/02.jpg",
+    email: "sofia.santos@hotmail.com",
+    location: "Ericeira, Portugal",
+    surfLevel: "intermediate",
+    homeBreak: "Ribeira d'Ilhas",
+    currentMood: "Excited",
+    externalId: "sofia_ericeira",
+    socialHandle: "@sofia_ondas",
+    timezone: "Europe/Lisbon",
+    favoriteSpots: ["nazare", "hossegor", "pipeline"],
+    role: "fan",
+    isVerified: false,
+    joinedDate: "2024-02-10T14:20:00Z"
+  },
+  {
+    id: "wsl_user_004",
+    name: "Carlos Mendoza",
+    avatar: "/avatars/m/02.jpg",
+    email: "carlos.mendoza@yahoo.com",
+    location: "Puerto Escondido, Mexico",
+    surfLevel: "advanced",
+    homeBreak: "Puerto Escondido",
+    currentMood: "Pumped",
+    externalId: "carlos_puerto",
+    socialHandle: "@carlos_surf_mx",
+    timezone: "America/Mexico_City",
+    favoriteSpots: ["teahupoo", "pipeline", "puerto-escondido"],
+    role: "fan",
+    isVerified: false,
+    joinedDate: "2024-01-28T11:45:00Z"
+  },
+  {
+    id: "wsl_user_005",
+    name: "Keoni Nakamura",
+    avatar: "/avatars/m/03.jpg",
+    email: "keoni.nakamura@gmail.com",
+    location: "North Shore, Hawaii",
+    surfLevel: "pro",
+    homeBreak: "Pipeline",
+    currentMood: "Zen",
+    externalId: "keoni_pipeline",
+    socialHandle: "@keoni_northshore",
+    timezone: "Pacific/Honolulu",
+    favoriteSpots: ["pipeline", "sunset-beach", "waimea"],
+    role: "verified_surfer",
+    isVerified: true,
+    joinedDate: "2023-10-05T07:15:00Z"
+  }
+];
+
+// Legacy compatibility - map old test users to new surf users
+export const testUsers = realSurfUsers.slice(0, 10).map((user, index) => ({
+  ...user,
+  id: `user-${String(index + 1).padStart(2, '0')}`,
+  jobTitle: getJobTitleForSurfer(user.surfLevel),
+  currentMood: user.currentMood
+}));
+
+function getJobTitleForSurfer(level: string): string {
+  switch (level) {
+    case 'pro': return 'Professional Surfer';
+    case 'advanced': return 'Surf Instructor';
+    case 'intermediate': return 'Surf Enthusiast';
+    default: return 'Surf Student';
+  }
+}
+
+// Remove old test users - they're replaced above
+/*
   {
     id: "user-03",
     name: "Darryn Campbell",
@@ -1120,3 +1298,4 @@ export const testUsers = [
     timezone: "America/Chicago",
   },
 ];
+*/

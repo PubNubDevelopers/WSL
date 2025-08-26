@@ -115,7 +115,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 48000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 1,
         correctOption: 1,
@@ -149,7 +149,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 90000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 2,
         pollType: "side",
@@ -183,7 +183,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 159000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 3,
         correctOption: 2,
@@ -217,7 +217,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 203000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 4,
         correctOption: 2,
@@ -251,7 +251,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 270000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 5,
         correctOption: 1,
@@ -286,7 +286,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 317000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 6,
         correctOption: 2,
@@ -320,7 +320,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 376000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 7,
         correctOption: 0,
@@ -354,7 +354,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 436000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 8,
         correctOption: 0,
@@ -388,7 +388,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 497000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 9,
         correctOption: 2,
@@ -421,7 +421,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 558000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 10,
         correctOption: 1,
@@ -455,7 +455,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 639000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 11,
         correctOption: 1,
@@ -490,7 +490,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 679000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 12,
         correctOption: 1,
@@ -524,7 +524,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 740000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 13,
         correctOption: 0,
@@ -557,7 +557,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 827000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 14,
         correctOption: 1,
@@ -590,7 +590,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 860000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 15,
         correctOption: 0,
@@ -624,7 +624,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 920000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 16,
         correctOption: 1,
@@ -659,7 +659,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 968000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 17,
         correctOption: 3,
@@ -694,7 +694,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 1053000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 18,
         correctOption: 3,
@@ -729,7 +729,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 1097000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 19,
         correctOption: 0,
@@ -764,7 +764,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 1156000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 20,
         correctOption: 2,
@@ -799,7 +799,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 1200000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 21,
         correctOption: 3,
@@ -816,7 +816,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 1200000,
     persistInHistory: true,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 0,
         pollType: "match",
@@ -830,7 +830,7 @@ exports.polls = [
     timeSinceVideoStartedInMs: 3000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-votes",
+      channel: "wsl.polls.votes",
       data: {
         pollId: 2,
         questionId: "1",

@@ -11,8 +11,8 @@ exports.angry = [
         alertText: "Take your frustration out on this poll",
         pollType: "side",
         options: [
-          { id: 1, text: "Leeds United" },
-          { id: 2, text: "Southampton FC" },
+          { id: 1, text: "Griffin Colapinto" },
+          { id: 2, text: "John John Florence" },
         ],
       },
     },
@@ -21,7 +21,7 @@ exports.angry = [
     timeSinceVideoStartedInMs: 48000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 101,
         correctOption: 0,
@@ -48,8 +48,8 @@ exports.cheer = [
         alertText: "Only winners unlock this poll",
         pollType: "side",
         options: [
-          { id: 1, text: "Leeds United" },
-          { id: 2, text: "Southampton FC" },
+          { id: 1, text: "Griffin Colapinto" },
+          { id: 2, text: "John John Florence" },
         ],
       },
     },
@@ -58,7 +58,7 @@ exports.cheer = [
     timeSinceVideoStartedInMs: 48000,
     persistInHistory: false,
     action: {
-      channel: "game.poll-results",
+      channel: "wsl.polls.results",
       data: {
         id: 102,
         correctOption: 0,

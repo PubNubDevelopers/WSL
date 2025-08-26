@@ -13,7 +13,7 @@ import {
   PushNotificationsIcon
 } from './sideMenuIcons'
 import SideMenuDataControls from './dataControls'
-import { ChatBotIcon } from '../widget-bot/botWidget'
+
 import SelfLedHelp from './selfLedHelp'
 import { chatChannelId } from '../data/constants'
 import { urls } from '../data/urls'
@@ -355,7 +355,7 @@ function SideMenuIlluminate ({ isGuidedDemo }) {
         }
       />
       <TextWithLinkButton
-        label={'Dynamic poll'}
+        label={'Dynamic engagement events'}
         buttonText={'View'}
         url={
           isGuidedDemo
@@ -392,7 +392,9 @@ function SideMenuFunctions ({ isGuidedDemo }) {
         }
       />
       <div className='flex flex-row text-neutral50 font-normal gap-2 items-center'>
-        <ChatBotIcon className='max-w-8 min-w-8 max-h-8 min-h-8 bg-white rounded-lg' />
+        <div className='max-w-8 min-w-8 max-h-8 min-h-8 bg-white rounded-lg flex items-center justify-center text-wsl-primary text-xl'>
+          🤖
+        </div>
         <div className=''>
           Find the Functions Widget in the demo and ask a question.
         </div>

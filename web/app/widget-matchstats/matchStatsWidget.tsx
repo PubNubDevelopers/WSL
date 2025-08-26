@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { BoxType, matchStatsConfig } from './matchStatsConfig'
+import { BoxType, surfStatsConfig } from './matchStatsConfig'
 import GuideOverlay from '../components/guideOverlay'
 import { matchStatsChannelId } from '../data/constants'
 
@@ -15,7 +15,7 @@ export default function MatchStatsWidget ({
   visibleGuide,
   setVisibleGuide
 }) {
-  const [matchStats, setMatchStats] = useState<any | null>(matchStatsConfig)
+  const [surfStats, setSurfStats] = useState<any | null>(surfStatsConfig)
   const [featuredPlayer, setFeaturedPlayer] = useState(1)
   const commonStatsBoxClasses =
     'min-h-36 max-h-36 min-w-44 max-w-56 bg-white border-1 border-navy200 rounded-lg'
@@ -43,33 +43,33 @@ export default function MatchStatsWidget ({
       })
       .then(result => {
         if (result && result.channels[matchStatsChannelId]) {
-          const previousMatchStats = result.channels[matchStatsChannelId][0]
-          if (previousMatchStats) {
-            processReceivedMessage(previousMatchStats.message)
+          const previousSurfStats = result.channels[matchStatsChannelId][0]
+          if (previousSurfStats) {
+            processReceivedMessage(previousSurfStats.message)
           }
         }
       })
   }, [chat, isGuidedDemo])
 
-  function processReceivedMessage (matchStatsMessage) {
-    setMatchStats(prevStats => {
+  function processReceivedMessage (surfStatsMessage) {
+    setSurfStats(prevStats => {
       const updatedStats = { ...prevStats }
 
-      Object.keys(matchStatsMessage).forEach(key => {
+      Object.keys(surfStatsMessage).forEach(key => {
         if (updatedStats[key] && updatedStats[key].info) {
           updatedStats[key] = {
             ...updatedStats[key],
             info: updatedStats[key].info.map((infoEntry, index) => ({
               ...infoEntry,
-              stat: matchStatsMessage[key].info[index]?.stat || infoEntry.stat,
+              stat: surfStatsMessage[key].info[index]?.stat || infoEntry.stat,
               dataPrimary:
-                matchStatsMessage[key].info[index]?.dataPrimary ||
+                surfStatsMessage[key].info[index]?.dataPrimary ||
                 infoEntry.dataPrimary,
               dataSecondary:
-                matchStatsMessage[key].info[index]?.dataSecondary ||
+                surfStatsMessage[key].info[index]?.dataSecondary ||
                 infoEntry.dataSecondary,
               imageUrl:
-                matchStatsMessage[key].info[index]?.imageUrl ||
+                surfStatsMessage[key].info[index]?.imageUrl ||
                 infoEntry.imageUrl
             }))
           }
@@ -114,22 +114,22 @@ export default function MatchStatsWidget ({
         } gap-3 bg-brandAccent5 p-4 rounded-lg`}
       >
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox1)}
+          {giveStatsBox(surfStats?.statBox1)}
         </div>
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox2)}
+          {giveStatsBox(surfStats?.statBox2)}
         </div>
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox3)}
+          {giveStatsBox(surfStats?.statBox3)}
         </div>
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox4)}
+          {giveStatsBox(surfStats?.statBox4)}
         </div>
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox5)}
+          {giveStatsBox(surfStats?.statBox5)}
         </div>
         <div className={`${commonStatsBoxClasses}`}>
-          {giveStatsBox(matchStats?.statBox6)}
+          {giveStatsBox(surfStats?.statBox6)}
         </div>
         <div
           className={`hidden md:flex ${
@@ -137,7 +137,7 @@ export default function MatchStatsWidget ({
           }`}
         >
           {giveStatsBox(
-            matchStats?.featuredPlayers[featuredPlayer],
+            surfStats?.featuredSurfers[featuredPlayer],
             featuredPlayer,
             player => setFeaturedPlayer(player)
           )}

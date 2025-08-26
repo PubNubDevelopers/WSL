@@ -17,13 +17,19 @@ interface ChatMessageProps {
   currentUser: User
   users: User[]
   channel: Channel
+  translations?: Record<string, { originalText: string; translatedText: string; language: string; confidence: number }>
+  showTranslations?: boolean
+  selectedLanguage?: 'en' | 'pt' | 'es'
 }
 
 export default function ChatMessage ({
   message,
   currentUser,
   users,
-  channel
+  channel,
+  translations,
+  showTranslations,
+  selectedLanguage
 }: ChatMessageProps) {
   const [ref, hovering] = useHover()
   const [showReactions, setShowReactions] = useState(false)
@@ -86,6 +92,48 @@ export default function ChatMessage ({
   const filtered = users.filter(user => message.userId === user.id)
   const user = filtered.length === 1 ? filtered[0] : null
 
+  // Check if there's a translation embedded in message metadata OR message payload
+  const messageWithMeta = message as any // Cast to access meta property
+  
+  // Look for translations embedded in message payload (Chat SDK strips metadata)
+  const rawMessage = typeof (messageWithMeta as any).toJSON === 'function' ? (messageWithMeta as any).toJSON() : messageWithMeta;
+  
+  // Parse translation data from text field marker (Chat SDK strips all custom fields)
+  const parseTextTranslation = () => {
+    const messageText = rawMessage.text || '';
+    const translationRegex = /\[WSL-TRANSLATION:(\w+)>(\w+):(.+?)\]/;
+    const match = messageText.match(translationRegex);
+    
+    if (match) {
+      const [fullMatch, sourceLang, targetLang, translatedText] = match;
+      
+      return {
+        source: 'text-marker',
+        data: {
+          translatedText,
+          originalLang: sourceLang, 
+          translatedLang: targetLang
+        },
+        originalText: messageText.replace(fullMatch, '').trim(), // Remove marker from display
+        marker: fullMatch
+      };
+    }
+    return null;
+  };
+  
+  const translationResult = parseTextTranslation();
+  const translationData = translationResult?.data || null;
+  
+  const hasTranslation = showTranslations && 
+                        translationData && 
+                        translationData.translatedText &&
+                        translationData.originalLang !== 'EN' // Don't show translation if original is already English
+
+
+
+  // Get clean message text (without translation marker for display)
+  const displayText = translationResult?.originalText || rawMessage.text;
+
   const renderMessagePart = (
     messagePart: MixedTextTypedElement,
     index: number
@@ -144,7 +192,32 @@ export default function ChatMessage ({
             ? 'This user has been banned'
             : userRestrictions.mute
             ? 'This user has been muted'
-            : message.getMessageElements().map(renderMessagePart)}
+            : (
+              <div className="space-y-1">
+                <div>
+                  {translationResult ? 
+                    // Display clean text (without marker) when we have translation
+                    displayText
+                    :
+                    // Use normal Chat SDK parsing when no translation
+                    message.getMessageElements().map(renderMessagePart)
+                  }
+                </div>
+                {hasTranslation && translationData && (
+                  <div className="text-sm text-gray-600 bg-blue-50 px-2 py-1 rounded border-l-2 border-blue-300">
+                    <div className="flex items-center gap-1 text-xs text-blue-600 mb-1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.01-4.65.75-6.96l-1.41 1.41c.73 1.34.5 3.01-.59 4.09l-.36.37-.44-.44c-1.1-1.1-1.28-2.75-.59-4.09l-1.41-1.41c-1.26 2.31-.99 5.02.75 6.96l.03.03-2.54 2.51 1.41 1.41 2.5-2.5 2.5 2.5 1.41-1.41zM18.5 10l-1.41-1.41c-.73 1.34-.5 3.01.59 4.09l.36.37.44-.44c1.1-1.1 1.28-2.75.59-4.09L20.48 7.1c1.26 2.31.99 5.02-.75 6.96l-.03.03 2.54 2.51-1.41 1.41-2.5-2.5-2.5 2.5-1.41-1.41 2.54-2.51-.03-.03c-1.74-1.94-2.01-4.65-.75-6.96z"/>
+                      </svg>
+                      <span>{translationData.originalLang} → {translationData.translatedLang}</span>
+                    </div>
+                    <div className="italic">
+                      "{translationData.translatedText}"
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
         <div className={'text-[11px] font-[400] leading-[150%]'}>
           {pubnubTimetokenToHHMM(message.timetoken)}

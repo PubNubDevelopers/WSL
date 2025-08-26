@@ -14,7 +14,8 @@ import {
   pushChannelSalesId,
   dynamicAdChannelId,
   illuminateUpgradeReaction,
-  serverVideoControlChannelId
+  serverVideoControlChannelId,
+  hypeUpdatesChannelId
 } from '../data/constants'
 import { getAuthKey } from '../getAuthKey'
 
@@ -37,8 +38,8 @@ export default function Page () {
       alertText: 'You unlocked a poll',
       pollType: 'side', //  The poll shows at the side of the UX
       options: [
-        { id: 1, text: 'Real Madrid', score: 1 },
-        { id: 2, text: 'Manchester City', score: 2 },
+        { id: 1, text: 'Griffin Colapinto', score: 1 },
+        { id: 2, text: 'John John Florence', score: 2 },
         { id: 3, text: 'Equal', score: 0 }
       ]
     },
@@ -79,9 +80,9 @@ export default function Page () {
     victoryPoints: 10,
     pollType: 'match', //  The poll appears below the stream
     options: [
-      { id: 1, text: 'Leeds United F.C.' },
-      { id: 2, text: 'Southampton F.C.' },
-      { id: 3, text: 'Draw' }
+      { id: 1, text: 'Griffin Colapinto' },
+      { id: 2, text: 'John John Florence' },
+      { id: 3, text: 'Equal Heat' }
     ]
   }
 
@@ -153,6 +154,226 @@ export default function Page () {
     })
   }
 
+  // Translation testing functions
+  async function testPortugueseTranslation() {
+    if (!chat) return;
+    
+    const portugueseMessages = [
+      "Olá pessoal! Como estão as ondas hoje?",
+      "Essa manobra foi incrível! Que tubo perfeito!",
+      "O Griffin está surfando muito bem nesta bateria.",
+      "Não consigo acreditar nessa pontuação!",
+      "Pipeline está com condições perfeitas para o campeonato."
+    ];
+    
+    const randomMessage = portugueseMessages[Math.floor(Math.random() * portugueseMessages.length)];
+    
+    console.log('🇵🇹 Sending Portuguese message:', randomMessage);
+    
+    // Send message to the main heat lounge channel where the translation function should pick it up
+    await chat.sdk.publish({
+      message: {
+        text: randomMessage,
+        userId: chat.currentUser.id,
+        timetoken: Date.now() * 10000,
+        type: 'chat_message'
+      },
+      channel: 'wsl.community.global',
+      storeInHistory: true
+    });
+  }
+  
+  async function listenForTranslations() {
+    if (!chat) return;
+    
+    // Listen to the main chat channel to see translated messages
+    const mainChannel = chat.sdk.channel('wsl.community.global');
+    const subscription = mainChannel.subscription({
+      receivePresenceEvents: false
+    });
+    
+    subscription.onMessage = (messageEvent) => {
+      const message = messageEvent.message;
+      if (message.meta && message.meta.translatedText) {
+        // Translation received - processing handled by UI components
+      }
+    };
+    
+    subscription.subscribe();
+    
+    // Auto-unsubscribe after 2 minutes to avoid memory leaks
+    setTimeout(() => {
+      subscription.unsubscribe();
+    }, 120000);
+  }
+  
+  async function testMultiplePortugueseMessages() {
+    if (!chat) return;
+    
+    const messages = [
+      "Que onda incrível! 🌊",
+      "O surfista brasileiro está dominando!",
+      "Pipeline está com condições perfeitas.",
+      "Essa é a melhor bateria do campeonato!",
+      "Não acredito que ele conseguiu essa manobra!"
+    ];
+    
+    console.log('🔄 Sending multiple Portuguese messages...');
+    
+    for (let i = 0; i < messages.length; i++) {
+      setTimeout(async () => {
+        await chat.sdk.publish({
+          message: {
+            text: messages[i],
+            userId: chat.currentUser.id,
+            timetoken: Date.now() * 10000,
+            type: 'chat_message'
+          },
+          channel: 'wsl.community.global',
+          storeInHistory: true
+        });
+        console.log(`📤 Message ${i + 1}/5 sent:`, messages[i]);
+      }, i * 2000); // Send one message every 2 seconds
+    }
+  }
+  
+  async function testMessageWithTranslation() {
+    if (!chat) return;
+    
+    // Simulate what the PubNub Function would do - send message with translation metadata
+    await chat.sdk.publish({
+      message: {
+        text: 'Essa onda está perfeita!',
+        userId: chat.currentUser.id,
+        timetoken: Date.now() * 10000,
+        type: 'chat_message',
+        meta: {
+          translatedText: 'This wave is perfect!',
+          translatedLang: 'EN',
+          originalLang: 'PT'
+        }
+      },
+      channel: 'wsl.community.global',
+      storeInHistory: true,
+      meta: {
+        translatedText: 'This wave is perfect!',
+        translatedLang: 'EN',
+        originalLang: 'PT'
+      }
+    });
+  }
+
+  async function sendHypeBoost() {
+    if (!chat) return;
+    
+    // Send an additive 50% hype boost message
+    await chat.sdk.publish({
+      message: {
+        userId: chat.currentUser.id,
+        level: 50,
+        isAdditive: true, // This tells the hype widget to add 50 to current level
+        intensity: 'high',
+        timestamp: Date.now()
+      },
+      channel: hypeUpdatesChannelId,
+      storeInHistory: false // Don't persist hype messages - they're transient
+    });
+  }
+
+  async function clearAllPubNubHistory() {
+    if (!chat) {
+      console.error('❌ Chat not initialized');
+      return;
+    }
+
+    console.log('🧹 Starting to clear all PubNub history...');
+    
+    // Collect all channels used in the project
+    const allChannels = [
+      // Main WSL Production Channels
+      'wsl.community.global',
+      'wsl.translations.global',
+      'wsl.spots.pipeline-hawaii',
+      'wsl.spots.trestles-california',
+      'wsl.spots.teahupoo-tahiti',
+      'wsl.events.2024-pipeline-masters.heat-final',
+      'wsl.events.heat-updates',
+      'wsl.clips.requests',
+      'wsl.clips.notifications',
+      'wsl.fantasy-live',
+      'wsl.prop-pickem',
+      'wsl.stream.reactions',
+      'wsl.stream.hype',
+      'wsl.polls.live',
+      'wsl.polls.results',
+      'wsl.moderation.alerts',
+      'wsl.analytics.realtime',
+      'wsl.admin.alerts',
+      'wsl.system.events',
+      
+      // Game/Testing Channels
+      'game.push-self',
+      'game.push-sales',
+      'game.dynamic-ad',
+      'game.client-video-control',
+      'game.server-video-control',
+      'game.dataControlsOccupancy',
+      'illuminate-upgrade-reaction',
+      
+      // Legacy mapped channels
+      matchStatsChannelId,
+      liveCommentaryChannelId,
+      pollDeclarations,
+      pollResults,
+      pushChannelSelfId,
+      pushChannelSalesId,
+      dynamicAdChannelId,
+      clientVideoControlChannelId,
+      serverVideoControlChannelId,
+      illuminateUpgradeReaction
+    ];
+
+    // Remove duplicates
+    const uniqueChannels = [...new Set(allChannels)];
+    
+    console.log(`🗂️  Found ${uniqueChannels.length} unique channels to clear`);
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const channel of uniqueChannels) {
+      try {
+        console.log(`🧹 Clearing history for channel: ${channel}`);
+        
+        // Delete all messages from the channel
+        // Use a very old start time and current time to delete all messages
+        await chat.sdk.deleteMessages({
+          channel: channel,
+          start: '1', // Very early timetoken
+          end: String(Date.now() * 10000) // Current timetoken
+        });
+        
+        successCount++;
+        console.log(`✅ Cleared history for: ${channel}`);
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+      } catch (error) {
+        errorCount++;
+        console.error(`❌ Failed to clear history for ${channel}:`, error);
+      }
+    }
+
+    console.log(`🏁 History clearing complete!`);
+    console.log(`✅ Successfully cleared: ${successCount} channels`);
+    console.log(`❌ Failed to clear: ${errorCount} channels`);
+    
+    if (successCount > 0) {
+      console.log('🎉 PubNub history has been cleared from the project channels!');
+    }
+  }
+
   async function sendMatchStatsMessage () {
     if (!chat) return
     const randomStat3Digits = () => String(Math.floor(Math.random() * 400) + 1)
@@ -188,7 +409,7 @@ export default function Page () {
             {
               dataPrimary: randomStat1Digit(),
               dataSecondary: 'Player Name',
-              imageUrl: '/matchstats/playericon_piroe.jpg'
+              imageUrl: '/matchstats/playericon_silva.png'
             }
           ]
         },
@@ -355,6 +576,27 @@ export default function Page () {
           A backend test exists to start a stream and send status messages every
           500ms, until the stream stops. This can be used to test starting the
           stream, joining the stream late, and the stream looping.
+        </div>
+
+        {/* Key Demo Features Section */}
+        <div className='text-xl font-bold text-yellow-400 mt-6 mb-3'>🎬 Key Demo Features</div>
+        
+        <div
+          className={`${testStyle} bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer mb-4`}
+          onClick={() =>
+            sendPubNubMessage(serverVideoControlChannelId, {
+              type: 'ON_DEMAND_SCRIPT',
+              params: { scriptName: 'gold-jersey-drama' }
+            })
+          }
+        >
+          🏆 Trigger Gold Jersey Drama (26s Competition Finale)
+        </div>
+        
+        <div className='text-sm text-gray-400 mb-6 max-w-2xl'>
+          <strong>Manual Trigger:</strong> Start the epic competition finale immediately with leaderboard drama, 
+          achievement unlocks, and gold jersey ceremonies. 
+          <br/><span className='text-yellow-400'>⚠️ Note:</span> Drama also runs automatically at 17 minutes in main timeline.
         </div>
 
         <div className='text-xl'>Advertisements</div>
@@ -548,6 +790,73 @@ export default function Page () {
           }
         >
           Mock Illuminate requesting a poll (Anger)
+        </div>
+
+
+
+        {/* Hype Meter Testing Section */}
+        <div className='text-xl font-bold mt-8 mb-4 text-white'>
+          🔥 Hype Meter Testing
+        </div>
+        
+        <div
+          className={`${testStyle}`}
+          onClick={() => sendHypeBoost()}
+        >
+          🚀 Add +50% Hype Boost
+        </div>
+
+        {/* Translation Testing Section */}
+        <div className='text-xl font-bold mt-8 mb-4 text-white'>
+          🌐 Translation Function Testing
+        </div>
+        
+        <div
+          className={`${testStyle}`}
+          onClick={() => testPortugueseTranslation()}
+        >
+          📝 Send Portuguese Message (Test Translation)
+        </div>
+        
+        <div
+          className={`${testStyle}`}
+          onClick={() => listenForTranslations()}
+        >
+          👂 Listen for Translations (Check Console)
+        </div>
+        
+        <div
+          className={`${testStyle}`}
+          onClick={() => testMultiplePortugueseMessages()}
+        >
+          🔄 Send Multiple Portuguese Messages
+        </div>
+        
+        <div
+          className={`${testStyle}`}
+          onClick={() => testMessageWithTranslation()}
+        >
+          🧪 Test Message with Embedded Translation
+        </div>
+
+        {/* History Management Section */}
+        <div className='text-xl font-bold mt-8 mb-4 text-red-400'>
+          🧹 History Management
+        </div>
+        
+        <div
+          className={`${testStyle} font-bold text-red-400 border border-red-400 p-2 rounded hover:bg-red-900`}
+          onClick={() => {
+            if (confirm('⚠️ This will permanently delete ALL message history from ALL project channels. Are you sure?')) {
+              clearAllPubNubHistory();
+            }
+          }}
+        >
+          🗑️ Clear All PubNub History (DESTRUCTIVE)
+        </div>
+        
+        <div className='text-sm text-gray-400 mb-4'>
+          ⚠️ This will remove all stored messages from all WSL and game channels. Check the console for progress updates.
         </div>
 
         <div className='text-xl'>Match Statistics</div>
