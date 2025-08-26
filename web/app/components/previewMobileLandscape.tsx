@@ -48,8 +48,9 @@ export default function PreviewMobileLandscape ({
   const [chatDemoActive, setChatDemoActive] = useState(false)
   const [fantasyDemoActive, setFantasyDemoActive] = useState(false)
   const [hypeDemoActive, setHypeDemoActive] = useState(false)
-  const [qnaDemoActive, setQnaDemoActive] = useState(false)
+  const [qnaDemoActive, setQnaDemoActive] = useState(false) 
   const [propPicksDemoActive, setPropPicksDemoActive] = useState(false)
+  const [surferOddsDemoActive, setSurferOddsDemoActive] = useState(false)
   
   const pushChannelId = isGuidedDemo ? pushChannelSalesId : pushChannelSelfId
   const currentScoreRef = useRef(currentScore)
@@ -139,6 +140,10 @@ export default function PreviewMobileLandscape ({
           setPropPicksDemoActive(!propPicksDemoActive)
           console.log('Prop Picks demo toggled:', !propPicksDemoActive)
           break
+        case 's':
+          setSurferOddsDemoActive(!surferOddsDemoActive)
+          console.log('Surfer Odds demo toggled:', !surferOddsDemoActive)
+          break
         case 'escape':
           // Clear all demo modes
           setChatDemoActive(false)
@@ -146,6 +151,7 @@ export default function PreviewMobileLandscape ({
           setHypeDemoActive(false)
           setQnaDemoActive(false)
           setPropPicksDemoActive(false)
+          setSurferOddsDemoActive(false)
           console.log('All demo modes cleared')
           break
       }
@@ -153,7 +159,7 @@ export default function PreviewMobileLandscape ({
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [chatDemoActive, fantasyDemoActive, hypeDemoActive, qnaDemoActive, propPicksDemoActive])
+  }, [chatDemoActive, fantasyDemoActive, hypeDemoActive, qnaDemoActive, propPicksDemoActive, surferOddsDemoActive])
 
   return (
     <div className={`${className || ''} w-full h-full`} tabIndex={0}>
@@ -230,6 +236,7 @@ export default function PreviewMobileLandscape ({
               hypeDemoActive={hypeDemoActive}
               qnaDemoActive={qnaDemoActive}
               propPicksDemoActive={propPicksDemoActive}
+              surferOddsDemoActive={surferOddsDemoActive}
               awardPoints={(points, message) => {
                 AwardPoints(
                   chat,
@@ -299,6 +306,16 @@ export default function PreviewMobileLandscape ({
                   <span className='text-sm'>Props</span>
                 </div>
                 {propPicksDemoActive && <div className='w-2 h-2 bg-yellow-400 rounded-full animate-pulse'></div>}
+              </div>
+              
+              <div className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg transition-all ${
+                surferOddsDemoActive ? 'bg-cyan-500/30 border border-cyan-400' : 'hover:bg-white/10'
+              }`}>
+                <div className='flex items-center gap-2'>
+                  <kbd className='bg-cyan-500 text-white px-2 py-1 rounded text-sm font-bold'>S</kbd>
+                  <span className='text-sm'>Odds</span>
+                </div>
+                {surferOddsDemoActive && <div className='w-2 h-2 bg-cyan-400 rounded-full animate-pulse'></div>}
               </div>
               
               <div className='border-t border-white/20 mt-2 pt-2'>

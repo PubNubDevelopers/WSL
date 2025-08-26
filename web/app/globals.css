@@ -61,6 +61,187 @@ body {
   animation: float-up 2s ease-out forwards;
 }
 
+/* Demo Panel Text Override Styles */
+.chat-demo-override {
+  /* Override chat colors for dark backgrounds */
+  color: #f8fafc !important;
+}
+
+/* Main chat message bubbles */
+.chat-demo-override .bg-navy900 {
+  background-color: rgba(71, 85, 105, 0.9) !important; /* Darker slate for own messages */
+  color: #f8fafc !important;
+}
+
+.chat-demo-override .bg-navy100 {
+  background-color: rgba(226, 232, 240, 0.95) !important; /* Light background for other messages */
+  color: #1e293b !important; /* Dark text on light background */
+}
+
+.chat-demo-override .text-white {
+  color: #f8fafc !important;
+}
+
+/* Chat header and UI elements */
+.chat-demo-override .bg-wsl-deep-blue {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  color: #f8fafc !important;
+}
+
+.chat-demo-override .text-gray-500 {
+  color: #cbd5e1 !important;
+}
+
+.chat-demo-override .text-wsl-blue-600 {
+  color: #cbd5e1 !important;
+}
+
+.chat-demo-override .text-wsl-dark {
+  color: #f1f5f9 !important;
+}
+
+/* Input area and borders */
+.chat-demo-override .border-navy200 {
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+.chat-demo-override input {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+}
+
+.chat-demo-override input::placeholder {
+  color: rgba(203, 213, 225, 0.7) !important;
+}
+
+/* Mention suggestions */
+.chat-demo-override .bg-navy200 {
+  background-color: rgba(51, 65, 85, 0.95) !important;
+  color: #f8fafc !important;
+}
+
+.chat-demo-override .hover\:bg-navy100:hover {
+  background-color: rgba(71, 85, 105, 0.8) !important;
+  color: #f8fafc !important;
+}
+
+/* Translation text */
+.chat-demo-override .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+.chat-demo-override .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.chat-demo-override .text-blue-600 {
+  color: #93c5fd !important;
+}
+
+/* Fantasy Demo Panel Overrides */
+.fantasy-demo-override {
+  color: #1f2937 !important;
+}
+
+.fantasy-demo-override .text-wsl-dark {
+  color: #111827 !important;
+}
+
+.fantasy-demo-override .text-wsl-blue-600 {
+  color: #374151 !important;
+}
+
+.fantasy-demo-override .text-wsl-blue-700 {
+  color: #1f2937 !important;
+}
+
+.fantasy-demo-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+}
+
+.fantasy-demo-override .bg-wsl-blue-50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.fantasy-demo-override .bg-wsl-blue-100 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.fantasy-demo-override .text-white {
+  color: #1f2937 !important;
+}
+
+.qna-demo-override {
+  /* Override Q&A widget colors for dark purple background */
+  color: #1f2937 !important;
+}
+
+.qna-demo-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+}
+
+.qna-demo-override .text-wsl-dark {
+  color: #1f2937 !important;
+}
+
+.qna-demo-override .text-white {
+  color: #1f2937 !important;
+}
+
+.props-demo-override {
+  /* Override Prop Picks widget colors for dark orange background */
+  color: #1f2937 !important;
+}
+
+.props-demo-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+}
+
+.props-demo-override .text-white {
+  color: #1f2937 !important;
+}
+
+.props-demo-override .text-wsl-dark {
+  color: #1f2937 !important;
+}
+
+.odds-demo-override {
+  /* Override Surfer Odds widget colors for dark cyan background */
+  color: #1f2937 !important;
+}
+
+.odds-demo-override .text-wsl-dark {
+  color: #111827 !important;
+}
+
+.odds-demo-override .text-wsl-blue-600 {
+  color: #374151 !important;
+}
+
+.odds-demo-override .text-wsl-primary {
+  color: #1f2937 !important;
+}
+
+.odds-demo-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+}
+
+.odds-demo-override .bg-wsl-blue-50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.odds-demo-override .text-white {
+  color: #1f2937 !important;
+}
+
 @keyframes slide-down {
   0% {
     transform: translateY(-50%);

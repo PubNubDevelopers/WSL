@@ -42,6 +42,7 @@ interface SmartOverlayProps {
   hypeDemoActive: boolean
   qnaDemoActive: boolean
   propPicksDemoActive: boolean
+  surferOddsDemoActive: boolean
 }
 
 export default function MobileLandscapeContents({
@@ -63,7 +64,8 @@ export default function MobileLandscapeContents({
   fantasyDemoActive,
   hypeDemoActive,
   qnaDemoActive,
-  propPicksDemoActive
+  propPicksDemoActive,
+  surferOddsDemoActive
 }: SmartOverlayProps) {
   // Overlay management states
   const [activeOverlays, setActiveOverlays] = useState<string[]>([
@@ -274,7 +276,7 @@ export default function MobileLandscapeContents({
                 </div>
                 
                 {/* Chat Content */}
-                <div className='h-[calc(100%-60px)]'>
+                <div className='h-[calc(100%-60px)] chat-demo-override'>
                   <HeatLoungeWidget
                     className='w-full h-full bg-transparent border-0'
                     isMobilePreview={false} // Full desktop view
@@ -318,7 +320,7 @@ export default function MobileLandscapeContents({
                 </div>
                 
                 {/* Fantasy Content */}
-                <div className='h-[calc(100%-60px)]'>
+                <div className='h-[calc(100%-60px)] fantasy-demo-override'>
                   <FantasyLiveWidget
                     className='w-full h-full bg-transparent border-0'
                     isMobilePreview={false} // Full desktop view
@@ -367,7 +369,7 @@ export default function MobileLandscapeContents({
                 
                 {/* Q&A Content with modern spacing */}
                 <div className='h-[calc(100%-120px)] p-8'>
-                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner'>
+                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner qna-demo-override'>
                     <AnnouncerQnAWidget
                       className='w-full h-full bg-transparent border-0'
                       isMobilePreview={false}
@@ -413,8 +415,54 @@ export default function MobileLandscapeContents({
                 
                 {/* Prop Picks Content with modern spacing */}
                 <div className='h-[calc(100%-120px)] p-8'>
-                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner'>
+                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner props-demo-override'>
                     <PropPickemWidget
+                      className='w-full h-full bg-transparent border-0'
+                      isMobilePreview={false}
+                      chat={chat}
+                      isGuidedDemo={isGuidedDemo}
+                      guidesShown={guidesShown}
+                      visibleGuide={visibleGuide}
+                      setVisibleGuide={setVisibleGuide}
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Surfer Odds Demo Panel - Large modern overlay when demo activated */}
+        <AnimatePresence>
+          {surferOddsDemoActive && (
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.85, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className='absolute inset-8 z-25 pointer-events-auto'
+            >
+              <div className='w-full h-full bg-gradient-to-br from-cyan-900/15 via-blue-800/20 to-teal-900/15 backdrop-blur-3xl border border-cyan-400/30 shadow-2xl rounded-3xl overflow-hidden'>
+                {/* Modern Header with Glass Effect */}
+                <div className='flex items-center justify-between p-8 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-xl border-b border-cyan-400/20'>
+                  <div className='flex items-center gap-6'>
+                    <div className='w-5 h-5 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse shadow-lg'></div>
+                    <h2 className='text-white font-bold text-3xl tracking-wide drop-shadow-lg'>🏄‍♂️ Surfer Odds</h2>
+                  </div>
+                  <div className='flex items-center gap-4'>
+                    <div className='text-base text-cyan-200 bg-cyan-500/20 px-6 py-3 rounded-2xl border border-cyan-400/30 backdrop-blur-sm shadow-lg'>
+                      Pipeline Masters
+                    </div>
+                    <div className='text-sm text-white/70 bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm'>
+                      Press S to toggle
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Surfer Odds Content with modern spacing */}
+                <div className='h-[calc(100%-120px)] p-8'>
+                  <div className='w-full h-full bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 overflow-hidden shadow-inner odds-demo-override'>
+                    <SurferOddsWidget
                       className='w-full h-full bg-transparent border-0'
                       isMobilePreview={false}
                       chat={chat}
